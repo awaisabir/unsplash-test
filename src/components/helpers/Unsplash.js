@@ -13,7 +13,7 @@ class UnsplashSingleton {
         UnsplashSingleton.instance = this;
     }
 
-    getPhotos = async (page, perPage = 10, orderBy = "latest") => {
+    getPhotos = async (page, perPage = 20, orderBy = "latest") => {
         const response = await this._unsplash.photos.listPhotos(page, perPage, orderBy);
         const photos = await response.json();
 
@@ -27,14 +27,14 @@ class UnsplashSingleton {
         return photo;
     };
     
-    getPhotosByTerm = async (term, page = 1, per_page = 10) => {
+    getPhotosByTerm = async (term, page = 1, per_page = 20) => {
         const response = await this._unsplash.search.photos(term, page, per_page);
         const photos = await response.json();
 
         return photos;
     };
 
-    getCollections = async (page, perPage = 10, orderBy = "latest") => {
+    getCollections = async (page, perPage = 20, orderBy = "latest") => {
         const response = await this._unsplash.collections.listCollections(page, perPage, orderBy);
         const collections = await response.json();
 
@@ -48,7 +48,7 @@ class UnsplashSingleton {
         return collection;
     };
 
-    getCollectionsByTerm = async (term, page = 1, per_page = 10) => {
+    getCollectionsByTerm = async (term, page = 1, per_page = 20) => {
         const response = await this._unsplash.search.collections(term, page, per_page);
         const collections = await response.json();
 
