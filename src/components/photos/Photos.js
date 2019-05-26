@@ -4,17 +4,17 @@ import StyledComponents from "styled-components";
 import Photo from "./Photo";
 
 const propTypes = {
-  photos: PropTypes.array.isRequired
+  photos: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired
 };
 
-const MasonryLayout = StyledComponents.div`
+export const MasonryLayout = StyledComponents.div`
   column-count: 4;
   margin: 1.5em;
   padding: 0;
   column-gap: 1.5em;
 `;
 
-const MasonryBrick = StyledComponents.div`
+export const MasonryBrick = StyledComponents.div`
   display: inline-block;
   margin: 0 0 1.5em;
   width: 100%;

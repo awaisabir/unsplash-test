@@ -8,7 +8,7 @@ const propTypes = {
     collections: PropTypes.array.isRequired
 };
 
-const CollectionsContainer = StyledComponents.div`
+export const CollectionsContainer = StyledComponents.div`
     justify-content: space-evenly;
     display: flex;
     flex-direction: row;
