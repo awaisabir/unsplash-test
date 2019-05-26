@@ -1,8 +1,6 @@
 # Unsplash Full-Script
 
-<div style="text-align: center;">
-    <img src="https://gfycat.com/spotlessglaringatlanticblackgoby.gif" />
-</div>
+Video: https://gfycat.com/spotlessglaringatlanticblackgoby-dog
 
 My submission for the Full-Script Unsplash test
 
