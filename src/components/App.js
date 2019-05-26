@@ -37,7 +37,7 @@ class App extends React.Component {
       collections: [],
       loading: false,
       error: false,
-      selectedOption: "photos",
+      errorMessage: "",
       currentTerm: "",
       queriedTerm: "",
       totalPages: 350,
@@ -74,172 +74,128 @@ class App extends React.Component {
       // is it a query?
       if (queriedTerm) {
         if (queryType === "photos") {
-          this.photosRequest("SEARCH");
+          this.photosRequest();
         } else {
-          this.collectionsRequest("SEARCH");
+          this.collectionsRequest();
         }
       } else {
-        if (queryType === "photos") {
-          this.photosRequest("LATEST");
-        } else {
-          this.collectionsRequest("LATEST");
-        }
+          this.photosRequest();
       }
     }
   }
 
-  photosRequest = (type) => {
-    const { queriedTerm, currentPage } = this.state
+  photosRequest = () => {
+    const { queriedTerm, currentPage } = this.state;
+
     this.setState({
       loading: true
+    }, async () => {
+      try {
+        if (queriedTerm) {
+          const { results, total_pages } = await Unsplash.getPhotosByTerm(queriedTerm, currentPage, 20);
+
+          this.setState({
+            photos: results,
+            totalPages: total_pages,
+            loading: false
+          });
+        } else {
+          const photos = await Unsplash.getPhotos(currentPage);
+
+          this.setState({
+            photos: photos,
+            loading: false
+          });
+        }
+      } catch (_) {
+        this.setState({
+          loading: false,
+          error: true
+        });
+      }    
     });
-
-    switch(type) {
-      case "SEARCH":
-        (async () => {
-          try {
-            const { results, total_pages } = await Unsplash.getPhotosByTerm(queriedTerm, currentPage, 20);
-            this.setState({
-              photos: results,
-              totalPages: total_pages,
-              loading: false
-            });
-          } catch (_) {
-            this.setState({
-              loading: false,
-              error: true
-            });
-          }
-        })();
-
-        break;
-
-      case "LATEST":
-          (async () => {
-            try {
-              const photos = await Unsplash.getPhotos(currentPage, 20, "latest");
-              this.setState({
-                photos: photos,
-                loading: false
-              });
-            } catch (_) {
-              this.setState({
-                loading: false,
-                error: true
-              });
-            }
-          })();
-      break;
-
-      default:
-        break;
-
-    }
   };
 
-  collectionsRequest = (type) => {
-    const { queriedTerm, currentPage } = this.state
+  collectionsRequest = () => {
+    const { queriedTerm, currentPage } = this.state;
+
     this.setState({
       loading: true
+    }, async () => {
+      try {
+        const { results, total_pages } = await Unsplash.getCollectionsByTerm(queriedTerm, currentPage, 10);
+
+        this.setState({
+          collections: results,
+          totalPages: total_pages,
+          photos: [],
+          loading: false
+        });
+      } catch (_) {
+        this.setState({
+          loading: false,
+          error: true
+        });
+      }
     });
-
-    switch(type) {
-      case "SEARCH":
-        (async () => {
-          try {
-            const { results, total_pages } = await Unsplash.getCollectionsByTerm(queriedTerm, currentPage, 10);
-
-            this.setState({
-              collections: results,
-              totalPages: total_pages,
-              photos: [],
-              loading: false
-            });
-          } catch (_) {
-            this.setState({
-              loading: false,
-              error: true
-            });
-          }
-        })();
-
-        break;
-
-      case "LATEST":
-          (async () => {
-            try {
-              const collections = await Unsplash.getCollections(currentPage, 20, "latest");
-              this.setState({
-                collections: collections,
-                photos: [],
-                loading: false
-              });
-            } catch (_) {
-              this.setState({
-                loading: false,
-                error: true
-              });
-            }
-          })();
-      break;
-
-      default:
-        break;
-
-    }
   };
 
   onSearch = (term) => {
     this.setState({
-      currentTerm: term
+      currentTerm: term,
+      error: false
     });
   };
 
   onSubmit = (currentOption) => {
-    this.setState({
-      selectedOption: currentOption,
-      currentPage: 1,
-      loading: true,
-      queriedTerm: this.state.currentTerm
-    }, async () => {
-      if (this.state.selectedOption === "collections") {
-        const { results, total_pages } = await Unsplash.getCollectionsByTerm(this.state.queriedTerm, 1, 20);
-        
+    if (this.state.currentTerm === "") {
+      this.setState({
+        error: true,
+        errorMessage: "You need to enter a keyword to search with"
+      });
+
+      return;
+    }
+    
+    if (currentOption === "collections") {
+      (async () => {
+        const { results, total_pages } = await Unsplash.getCollectionsByTerm(this.state.currentTerm, 1, 20);
+          
         this.setState({
           collections: results,
           totalPages: total_pages,
           loading: false,
-          queryType: "collections"
+          queryType: currentOption,
+          queriedTerm: this.state.currentTerm,
+          currentPage: 1,
         });
-      }
-      
-      if (this.state.selectedOption === "photos") {        
-        const { results, total_pages } = await Unsplash.getPhotosByTerm(this.state.queriedTerm, 1, 20);
+      })();
+    } else {
+      (async () => {
+        const { results, total_pages } = await Unsplash.getPhotosByTerm(this.state.currentTerm, 1, 20);
+          
         this.setState({
           photos: results,
           totalPages: total_pages,
           loading: false,
-          queryType: "photos"
+          queryType: currentOption,
+          queriedTerm: this.state.currentTerm,
+          currentPage: 1
         });
-      }
-    });
+      })();
+    }
   };
 
   render() {
     const {
       loading,
       error,
-      selectedOption,
       photos,
       currentPage,
       totalPages,
       queryType,
       collections
     } = this.state;
-
-    if (error) {
-      return "Error ...";
-    }
   
     return (
       <React.Fragment>
@@ -248,7 +204,8 @@ class App extends React.Component {
             onSearch={this.onSearch}
             onSubmit={this.onSubmit}
             options={options}
-            currentOption={selectedOption}
+            currentOption={queryType}
+            error={error}
           />
         </SearchContainer>
   

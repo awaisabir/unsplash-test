@@ -5,7 +5,8 @@ const SearchBar = ({
     currentOption,
     onSearch, 
     onSubmit,
-    options
+    options,
+    error
 }) => {
     const [newOption, setNewOption] = useState(currentOption);
 
@@ -15,6 +16,7 @@ const SearchBar = ({
             type="text" 
             placeholder="Search..." 
             action
+            error={error}
         >
             <input />
             <Select compact options={options} defaultValue="photos" onChange={(e) => {setNewOption(e.target.innerText.toLowerCase())}}/>
