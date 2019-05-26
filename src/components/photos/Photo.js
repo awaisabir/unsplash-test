@@ -8,10 +8,13 @@ const propTypes = {
 
 const PhotoItem = ({photo}) => (
     <Image
+        as="a"
         alt={photo.title}
         style={{width: "100%"}}
         src={`${photo.urls.regular}`}
         size={"small"}
+        href={`${photo.links.html}`}
+        target='_blank'
     />
 );
 

@@ -23,6 +23,9 @@ describe("App", function() {
       /* stubs */
       sinon.stub(Unsplash.prototype, "getPhotosByTerm").returns({
         results: [{
+          links: {
+            html: "https://google.com"
+          },
           id: "1",
           title: "Photo Title",
           urls: {
@@ -33,6 +36,9 @@ describe("App", function() {
       });
 
       sinon.stub(Unsplash.prototype, "getPhotos").returns([{
+          links: {
+            html: "https://google.com"
+          },
           id: "2",
           title: "Photo Title",
           urls: {
@@ -43,6 +49,9 @@ describe("App", function() {
 
       sinon.stub(Unsplash.prototype, "getCollectionsByTerm").returns({
         results: [{
+          links: {
+            html: "https://google.com"
+          },
           id: "3",
           cover_photo: "https://imgplaceholder.com/420x320/ff7f7f/333333/fa-image",
           title: "Photo Title",

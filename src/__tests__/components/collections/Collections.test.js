@@ -13,6 +13,9 @@ describe("Collections", function() {
 
     const defaultProps = {
         collections: [{
+            links: {
+                html: "https://google.com"
+            },
             id: "e2933JEFWINJwnjejoiOIENWGEGWEnewioiooi",
             cover_photo: {
                 urls : {

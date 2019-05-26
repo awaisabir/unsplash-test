@@ -12,6 +12,9 @@ describe("PhotosList", function() {
 
     const defaultProps = {
         photo: {
+            links: {
+                html: "https://google.com"
+            },
             title: "Photo Title",
             urls: {
                 regular: "https://imgplaceholder.com/420x320/ff7f7f/333333/fa-image"

@@ -22,7 +22,10 @@ const Collection = ({collection, url}) => {
 
     return(
         <Card>
-            <Image 
+            <Image
+                as="a"
+                target="_blank"
+                href={`${collection.links.html}`}
                 src={url}
                 size={"small"}
                 style={{width: "100%"}}

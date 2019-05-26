@@ -13,6 +13,9 @@ describe("Collections", function() {
 
     const defaultProps = {
         collection: {
+            links: {
+                html: "https://google.com"
+            },
             title: "Title Collection",
             published_at: "2016-03-02T13:32:54-05:00",
             description: "Dummy description",
@@ -56,6 +59,9 @@ describe("Collections", function() {
     it("renders `Label` for tags when they are present", () => {
         props = {
             collection: {
+                links: {
+                    html: "https://google.com"
+                },
                 title: "Title Collection",
                 tags: [
                     {title: "Tag 1"},
