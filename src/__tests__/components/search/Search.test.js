@@ -9,7 +9,6 @@ import { Select, Image, Button, Input } from "semantic-ui-react";
 describe("Collections", function() {
     let sandbox;
     let wrapper;
-    let props;
 
     const defaultProps = {
         currentOption: "collections",
