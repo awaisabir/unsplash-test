@@ -17,7 +17,8 @@ class Collections extends React.Component {
             const url = collection.cover_photo ? collection.cover_photo.urls.regular : "https://imgplaceholder.com/420x320/ff7f7f/333333/fa-image";
             
             return (
-                <Collection 
+                <Collection
+                    key={collection.renderCollections}
                     collection={collection}
                     url={url}
                 />
