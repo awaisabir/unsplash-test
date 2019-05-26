@@ -17,7 +17,7 @@ const SearchBar = ({
             action
         >
             <input />
-            <Select compact options={options} defaultValue="photos" onChange={(e) => {setNewOption(e.target.innerText)}}/>
+            <Select compact options={options} defaultValue="photos" onChange={(e) => {setNewOption(e.target.innerText.toLowerCase())}}/>
             <Button type="submit" onClick={() => onSubmit(newOption)}>Search</Button>
         </Input>
     );
