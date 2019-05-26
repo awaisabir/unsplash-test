@@ -1,8 +1,30 @@
-### Unsplash Full-Script demo
+# Unsplash Full-Script demo
 
 My submission for the Full-Script Unsplash test
 
-Please do let me know if there is stuff I can improve on with regards to code quality. 
+Please do let me know if there is stuff I can improve on with regards to code quality.
+
+## Startup instructions:
+
+- Please have your Unsplash Access and Secret Keys handy and copy paste them into `src/config/Unsplash.js`.
+
+- Run:
+```js
+    npm install && npm run start
+```
+
+- The app will be live on `localhost:3000`.
+
+
+## Tests:
+
+- The test are in the `__tests__` folder in the `src/` directory.
+
+- To execute the testing suite, run:
+```js
+    npm run test
+```
+
 
 *Notes*:
 
