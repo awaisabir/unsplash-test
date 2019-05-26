@@ -8,23 +8,23 @@ import Photos from "./photos/Photos";
 import SearchBar from "./search/Search";
 import Collections from './collections/Collections';
 
-const SearchContainer = StyledComponents.div`
+export const SearchContainer = StyledComponents.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-top: 50px;
 `;
 
-const ErrorMessageContainer = StyledComponents.div`
+export const ErrorMessageContainer = StyledComponents.div`
   color: #9f3a38;
   font-weight: bold;
 `;
 
-const LoadingContainer = StyledComponents.div`
+export const LoadingContainer = StyledComponents.div`
   height: 100vh;
 `;
 
-const PaginationContainer = StyledComponents.div`
+export const PaginationContainer = StyledComponents.div`
   display: flex;
   justify-content: center;
   margin-bottom: 15px;
@@ -50,6 +50,8 @@ class App extends React.Component {
       currentPage: 1,
       queryType: "photos"
     }
+
+    this.unsplash = new Unsplash();
   }
 
   componentDidMount() {
@@ -74,15 +76,15 @@ class App extends React.Component {
 
     (async () => {
       if (queriedTerm) {
-        const { results, total_pages } = await Unsplash.getPhotosByTerm(queriedTerm, currentPage, 20);
-
+        const { results, total_pages } = await this.unsplash.getPhotosByTerm(queriedTerm, currentPage, 20);
+        
         this.setState({
           photos: results,
           totalPages: total_pages,
           loading: false
         });
       } else {
-        const photos = await Unsplash.getPhotos(currentPage);
+        const photos = await this.unsplash.getPhotos(currentPage);
 
         this.setState({
           photos: photos,
@@ -98,7 +100,7 @@ class App extends React.Component {
 
     (async () => {
       try {
-        const { results, total_pages } = await Unsplash.getCollectionsByTerm(queriedTerm, currentPage, 10);
+        const { results, total_pages } = await this.unsplash.getCollectionsByTerm(queriedTerm, currentPage, 10);
 
         this.setState({
           collections: results,
