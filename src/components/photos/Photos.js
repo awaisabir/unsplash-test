@@ -1,7 +1,11 @@
 import React from "react";
+import PropTypes from "prop-types";
 import StyledComponents from "styled-components";
 import Photo from "./Photo";
 
+const propTypes = {
+  photos: PropTypes.array.isRequired
+};
 
 const MasonryLayout = StyledComponents.div`
   column-count: 4;
@@ -16,28 +20,26 @@ const MasonryBrick = StyledComponents.div`
   width: 100%;
 `;
 
-class Photos extends React.Component {
-    renderPhotos = () => {
-        const { photos } = this.props;
-    
-        let itemToMap = photos.results ? photos.results : photos;
-    
-        return itemToMap.map((photo) => (
-          <MasonryBrick key={photo.id}>
-            <Photo 
-              photo={photo}
-            />
-          </MasonryBrick>
-        ));
-      };
+const Photos = ({photos}) => {
+    const renderPhotos = () => {
+      let itemToMap = photos.results ? photos.results : photos;
+  
+      return itemToMap.map((photo) => (
+        <MasonryBrick key={photo.id}>
+          <Photo 
+            photo={photo}
+          />
+        </MasonryBrick>
+      ));
+    };
 
-    render() {
-        return (
-            <MasonryLayout>
-                {this.renderPhotos()}
-            </MasonryLayout>
-        )
-    }
+    return (
+        <MasonryLayout>
+            {renderPhotos()}
+        </MasonryLayout>
+    );
 };
 
+Photos.propTypes = propTypes;
+Photos.displayName = "Photos";
 export default Photos;

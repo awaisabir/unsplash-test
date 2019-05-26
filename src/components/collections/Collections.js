@@ -1,7 +1,12 @@
 import React from "react";
+import PropTypes from "prop-types";
 import StyledComponents from "styled-components";
 
 import Collection from "./Collection";
+
+const propTypes = {
+    collections: PropTypes.array.isRequired
+};
 
 const CollectionsContainer = StyledComponents.div`
     justify-content: space-evenly;
@@ -11,14 +16,14 @@ const CollectionsContainer = StyledComponents.div`
     align-items: flex-end;
 `;
 
-class Collections extends React.Component {
-    renderCollections = () => (
-        this.props.collections.map((collection) => {
+const Collections = ({collections}) => {
+    const renderCollections = () => (
+        collections.map((collection) => {
             const url = collection.cover_photo ? collection.cover_photo.urls.regular : "https://imgplaceholder.com/420x320/ff7f7f/333333/fa-image";
             
             return (
                 <Collection
-                    key={collection.renderCollections}
+                    key={collection.id}
                     collection={collection}
                     url={url}
                 />
@@ -26,13 +31,13 @@ class Collections extends React.Component {
         })
     );
 
-    render() {
-        return (
-            <CollectionsContainer>
-                {this.renderCollections()}
-            </CollectionsContainer>
-        );
-    }
+    return (
+        <CollectionsContainer>
+            {renderCollections()}
+        </CollectionsContainer>
+    );
 }
 
+Collections.propTypes = propTypes;
+Collections.displayName = "CollectionsList";
 export default Collections;
