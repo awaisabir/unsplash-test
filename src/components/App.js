@@ -6,7 +6,7 @@ import { Segment, Dimmer, Loader, Pagination } from "semantic-ui-react";
 
 import Photos from "./photos/Photos";
 import SearchBar from "./search/Search";
-import Collections from './collections/Collection';
+import Collections from './collections/Collections';
 
 const SearchContainer = StyledComponents.div`
   display: flex;
@@ -37,7 +37,7 @@ class App extends React.Component {
       collections: [],
       loading: false,
       error: false,
-      selectedOption: "Photos",
+      selectedOption: "photos",
       currentTerm: "",
       queriedTerm: "",
       totalPages: 350,
@@ -98,9 +98,10 @@ class App extends React.Component {
       case "SEARCH":
         (async () => {
           try {
-            const photos = await Unsplash.getPhotosByTerm(queriedTerm, currentPage, 20);
+            const { results, total_pages } = await Unsplash.getPhotosByTerm(queriedTerm, currentPage, 20);
             this.setState({
-              photos: photos,
+              photos: results,
+              totalPages: total_pages,
               loading: false
             });
           } catch (_) {
@@ -146,9 +147,11 @@ class App extends React.Component {
       case "SEARCH":
         (async () => {
           try {
-            const collections = await Unsplash.getCollectionsByTerm(queriedTerm, currentPage, 10);
+            const { results, total_pages } = await Unsplash.getCollectionsByTerm(queriedTerm, currentPage, 10);
+
             this.setState({
-              collections: collections,
+              collections: results,
+              totalPages: total_pages,
               photos: [],
               loading: false
             });
@@ -194,26 +197,27 @@ class App extends React.Component {
 
   onSubmit = (currentOption) => {
     this.setState({
-      option: currentOption,
+      selectedOption: currentOption,
       currentPage: 1,
       loading: true,
       queriedTerm: this.state.currentTerm
     }, async () => {
-      if (this.state.option === "collections") {
-        const collections = await Unsplash.getCollectionsByTerm(this.state.queriedTerm, 1, 20);
+      if (this.state.selectedOption === "collections") {
+        const { results, total_pages } = await Unsplash.getCollectionsByTerm(this.state.queriedTerm, 1, 20);
+        
         this.setState({
-          collections: collections,
-          photos: [],
+          collections: results,
+          totalPages: total_pages,
           loading: false,
           queryType: "collections"
         });
       }
       
-      if (this.state.option === "photos") {        
-        const photos = await Unsplash.getPhotosByTerm(this.state.queriedTerm, 1, 20);
+      if (this.state.selectedOption === "photos") {        
+        const { results, total_pages } = await Unsplash.getPhotosByTerm(this.state.queriedTerm, 1, 20);
         this.setState({
-          photos: photos,
-          collections: [],
+          photos: results,
+          totalPages: total_pages,
           loading: false,
           queryType: "photos"
         });
@@ -225,7 +229,7 @@ class App extends React.Component {
     const {
       loading,
       error,
-      option,
+      selectedOption,
       photos,
       currentPage,
       totalPages,
@@ -237,7 +241,6 @@ class App extends React.Component {
       return "Error ...";
     }
   
-    console.log(collections, photos, queryType);
     return (
       <React.Fragment>
         <SearchContainer>
@@ -245,7 +248,7 @@ class App extends React.Component {
             onSearch={this.onSearch}
             onSubmit={this.onSubmit}
             options={options}
-            currentOption={option}
+            currentOption={selectedOption}
           />
         </SearchContainer>
   
