@@ -8,6 +8,9 @@ import Photos from "./photos/Photos";
 import SearchBar from "./search/Search";
 import Collections from './collections/Collections';
 
+/**
+ * Styled Components
+ */
 export const SearchContainer = StyledComponents.div`
   display: flex;
   flex-direction: column;
@@ -62,11 +65,18 @@ class App extends React.Component {
     this.unsplash = new Unsplash();
   }
 
+  /**
+   * Fetch random images on inital mount
+   */
   componentDidMount() {
     this.setState({loading: true});
     this.fetchPhotos();
   }
 
+  /**
+   * check if the page changes. If it does then make a request based on 
+   * whether there was a previous query ran, or if it's random photos
+   */
   componentDidUpdate(_, prevState) {
     const { queriedTerm, currentPage, queryType } = this.state;
 
@@ -79,14 +89,23 @@ class App extends React.Component {
     }
   }
 
+  /**
+   * render photos
+   */
   renderPhotos = (photos, queryType) => {
     return photos.length > 0 ? <Photos photos={photos}/> : <NoResultsContainer>No {queryType} found 😅</NoResultsContainer>
   }
 
+  /**
+   * render collections
+   */
   renderCollections = (collections, queryType) => {
     return collections.length > 0 ? <Collections collections={collections}/> : <NoResultsContainer>No {queryType} found 😅</NoResultsContainer>
   }
 
+  /**
+   * Function to fetch photos and set state with necessary data
+   */
   fetchPhotos = (queriedTerm, currentPage) => {
     this.setState({loading: true});
 
@@ -111,6 +130,9 @@ class App extends React.Component {
     })();
   };
 
+  /**
+   * Function to fetch collections and set state with necessary data
+   */
   fetchCollections = (queriedTerm, currentPage) => {
     this.setState({loading: true});
 
@@ -133,6 +155,9 @@ class App extends React.Component {
     })();
   };
 
+  /**
+   * Function to update the term every time a user types
+   */
   onSearch = (term) => {
     this.setState({
       currentTerm: term,
@@ -140,7 +165,11 @@ class App extends React.Component {
     });
   };
 
+  /**
+   * Function to handle the sumbission of the search bar
+   */
   onSubmit = (currentOption) => {
+    // if the term in empty then we need to inform the user
     if (this.state.currentTerm === "") {
       this.setState({
         error: true,
@@ -150,6 +179,7 @@ class App extends React.Component {
       return;
     }
     
+    // fetch based on the type of query
     if (currentOption === "collections") {
       this.fetchCollections(this.state.currentTerm, 1);
     } else {
@@ -177,7 +207,7 @@ class App extends React.Component {
   
     return (
       <React.Fragment>
-
+        
         <SearchContainer>
           <SearchBar 
             onSearch={this.onSearch}
@@ -189,7 +219,7 @@ class App extends React.Component {
           <ErrorMessageContainer>
             {error && errorMessage}
           </ErrorMessageContainer>
-          
+
         </SearchContainer>
 
         {
