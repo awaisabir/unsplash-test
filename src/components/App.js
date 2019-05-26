@@ -30,6 +30,14 @@ export const PaginationContainer = StyledComponents.div`
   margin-bottom: 15px;
 `;
 
+const NoResultsContainer = StyledComponents.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 25px;
+  margin-bottom: 50px;
+`;
+
 const options = [
   { key: "photos", text: "Photos", value: "photos" },
   { key: "collections", text: "Collections", value: "collections" }
@@ -69,6 +77,14 @@ class App extends React.Component {
         this.fetchCollections(queriedTerm, currentPage);
       }
     }
+  }
+
+  renderPhotos = (photos, queryType) => {
+    return photos.length > 0 ? <Photos photos={photos}/> : <NoResultsContainer>No {queryType} found 😅</NoResultsContainer>
+  }
+
+  renderCollections = (collections, queryType) => {
+    return collections.length > 0 ? <Collections collections={collections}/> : <NoResultsContainer>No {queryType} found 😅</NoResultsContainer>
   }
 
   fetchPhotos = (queriedTerm, currentPage) => {
@@ -161,6 +177,7 @@ class App extends React.Component {
   
     return (
       <React.Fragment>
+
         <SearchContainer>
           <SearchBar 
             onSearch={this.onSearch}
@@ -172,8 +189,9 @@ class App extends React.Component {
           <ErrorMessageContainer>
             {error && errorMessage}
           </ErrorMessageContainer>
+          
         </SearchContainer>
-  
+
         {
           loading ?
           <LoadingContainer>
@@ -183,13 +201,13 @@ class App extends React.Component {
               </Dimmer>
             </Segment>
           </LoadingContainer> :
-          <React.Fragment>
 
-            {
-              queryType === "photos" ?
-                <Photos photos={photos}/> :
-                <Collections collections={collections} />
+          <React.Fragment>
+            {queryType === "photos" ?
+                <>{this.renderPhotos(photos, queryType)}</> :
+                <>{this.renderCollections(collections, queryType)}</>
             }
+
             <PaginationContainer>
               <Pagination
                 boundaryRange={0}
