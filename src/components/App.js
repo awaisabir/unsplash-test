@@ -4,21 +4,9 @@ import Unsplash from "./helpers/Unsplash";
 
 import { Segment, Dimmer, Loader, Pagination } from "semantic-ui-react";
 
-import Photo from "./photos/Photo";
+import Photos from "./photos/Photos";
 import SearchBar from "./search/Search";
-
-const MasonryLayout = StyledComponents.div`
-  column-count: 4;
-  margin: 1.5em;
-  padding: 0;
-  column-gap: 1.5em;
-`;
-
-const MasonryBrick = StyledComponents.div`
-  display: inline-block;
-  margin: 0 0 1.5em;
-  width: 100%;
-`;
+import Collections from './collections/Collection';
 
 const SearchContainer = StyledComponents.div`
   display: flex;
@@ -37,7 +25,8 @@ const PaginationContainer = StyledComponents.div`
 `;
 
 const options = [
-  { key: "photos", text: "Photos", value: "photos" }
+  { key: "photos", text: "Photos", value: "photos" },
+  { key: "collections", text: "Collections", value: "collections" }
 ];
 
 class App extends React.Component {
@@ -45,13 +34,15 @@ class App extends React.Component {
     super(props);
     this.state = {
       photos: [],
+      collections: [],
       loading: false,
       error: false,
       selectedOption: "Photos",
       currentTerm: "",
       queriedTerm: "",
       totalPages: 350,
-      currentPage: 1
+      currentPage: 1,
+      queryType: "photos"
     }
   }
 
@@ -76,15 +67,23 @@ class App extends React.Component {
   }
 
   componentDidUpdate(_, prevState) {
-    const { queriedTerm, currentPage } = this.state;
+    const { queriedTerm, currentPage, queryType } = this.state;
 
     // if the page has changed
     if (currentPage !== prevState.currentPage) {
       // is it a query?
       if (queriedTerm) {
-        this.photosRequest("SEARCH");
+        if (queryType === "photos") {
+          this.photosRequest("SEARCH");
+        } else {
+          this.collectionsRequest("SEARCH");
+        }
       } else {
-        this.photosRequest("LATEST");
+        if (queryType === "photos") {
+          this.photosRequest("LATEST");
+        } else {
+          this.collectionsRequest("LATEST");
+        }
       }
     }
   }
@@ -135,20 +134,56 @@ class App extends React.Component {
         break;
 
     }
-  }
+  };
 
-  renderPhotos = () => {
-    const { photos } = this.state;
+  collectionsRequest = (type) => {
+    const { queriedTerm, currentPage } = this.state
+    this.setState({
+      loading: true
+    });
 
-    let itemToMap = photos.results ? photos.results : photos;
+    switch(type) {
+      case "SEARCH":
+        (async () => {
+          try {
+            const collections = await Unsplash.getCollectionsByTerm(queriedTerm, currentPage, 10);
+            this.setState({
+              collections: collections,
+              photos: [],
+              loading: false
+            });
+          } catch (_) {
+            this.setState({
+              loading: false,
+              error: true
+            });
+          }
+        })();
 
-    return itemToMap.map((photo) => (
-      <MasonryBrick key={photo.id}>
-        <Photo 
-          photo={photo}
-        />
-      </MasonryBrick>
-    ));
+        break;
+
+      case "LATEST":
+          (async () => {
+            try {
+              const collections = await Unsplash.getCollections(currentPage, 20, "latest");
+              this.setState({
+                collections: collections,
+                photos: [],
+                loading: false
+              });
+            } catch (_) {
+              this.setState({
+                loading: false,
+                error: true
+              });
+            }
+          })();
+      break;
+
+      default:
+        break;
+
+    }
   };
 
   onSearch = (term) => {
@@ -164,11 +199,25 @@ class App extends React.Component {
       loading: true,
       queriedTerm: this.state.currentTerm
     }, async () => {
-      const photos = await Unsplash.getPhotosByTerm(this.state.queriedTerm, 1, 20);
-      this.setState({
-        photos: photos,
-        loading: false
-      });
+      if (this.state.option === "collections") {
+        const collections = await Unsplash.getCollectionsByTerm(this.state.queriedTerm, 1, 20);
+        this.setState({
+          collections: collections,
+          photos: [],
+          loading: false,
+          queryType: "collections"
+        });
+      }
+      
+      if (this.state.option === "photos") {        
+        const photos = await Unsplash.getPhotosByTerm(this.state.queriedTerm, 1, 20);
+        this.setState({
+          photos: photos,
+          collections: [],
+          loading: false,
+          queryType: "photos"
+        });
+      }
     });
   };
 
@@ -177,14 +226,18 @@ class App extends React.Component {
       loading,
       error,
       option,
+      photos,
       currentPage,
-      totalPages
+      totalPages,
+      queryType,
+      collections
     } = this.state;
 
     if (error) {
       return "Error ...";
     }
   
+    console.log(collections, photos, queryType);
     return (
       <React.Fragment>
         <SearchContainer>
@@ -206,10 +259,12 @@ class App extends React.Component {
             </Segment>
           </LoadingContainer> :
           <React.Fragment>
-            <MasonryLayout>
-              {this.renderPhotos()}
-            </MasonryLayout>
-      
+
+            {
+              queryType === "photos" ?
+                <Photos photos={photos}/> :
+                <Collections collections={collections} />
+            }
             <PaginationContainer>
               <Pagination
                 boundaryRange={0}
@@ -219,7 +274,10 @@ class App extends React.Component {
                 lastItem={null}
                 siblingRange={1} 
                 totalPages={totalPages}
-                onPageChange={(e, {activePage}) => this.setState({currentPage: activePage})}
+                onPageChange={(_, {activePage}) => {
+                  window.scroll(0,0);
+                  this.setState({currentPage: activePage});
+                }}
               />
             </PaginationContainer>
           </React.Fragment>
