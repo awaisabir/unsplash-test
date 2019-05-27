@@ -1,5 +1,3 @@
-# Unsplash Full-Script
-
 Video: https://gfycat.com/spotlessglaringatlanticblackgoby-dog
 
 Please do let me know if there is stuff I can improve on with regards to code quality.
