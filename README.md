@@ -2,8 +2,6 @@
 
 Video: https://gfycat.com/spotlessglaringatlanticblackgoby-dog
 
-My submission for the Full-Script Unsplash test
-
 Please do let me know if there is stuff I can improve on with regards to code quality.
 
 ## Startup instructions:
